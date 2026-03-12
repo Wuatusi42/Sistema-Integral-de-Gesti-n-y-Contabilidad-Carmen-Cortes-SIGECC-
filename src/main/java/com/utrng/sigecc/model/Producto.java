@@ -39,7 +39,7 @@ public class Producto {
 	@Column(name = "stock", nullable = false, columnDefinition = "INT DEFAULT 0")
 	private Integer stock;
 
-	@Column(name = "fechaCreacion")
+	@Column(name = "fecha_creacion")
 	private LocalDate fechaCreacion;
 
 	public Integer getIdProducto() {
