@@ -4,22 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SIGECC — Sistema de Gestión</title>
-
-  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- SIGECC CSS -->
   <link rel="stylesheet" th:href="@{/css/index.css}">
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════
-     SIDEBAR
-════════════════════════════════════════ -->
+<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
-    <a href="#" class="brand-logo">
+    <a th:href="@{/}" class="brand-logo">
       <div class="logo-box"><i class="bi bi-boxes"></i></div>
       SIGECC
     </a>
@@ -28,30 +22,21 @@
 
   <nav class="sidebar-nav">
     <div class="nav-section-label">Principal</div>
-    <a th:href="@{/}" class="nav-link-item">
-      <i class="bi bi-box-seam"></i> Dashboard
+    <a th:href="@{/}" class="nav-link-item active">
+      <i class="bi bi-grid-1x2"></i> Dashboard
     </a>
 
     <div class="nav-section-label">Inventario</div>
     <a th:href="@{/productos}" class="nav-link-item">
       <i class="bi bi-box-seam"></i> Productos
     </a>
-    <a href="#" class="nav-link-item">
-      <i class="bi bi-tags"></i> Categorías
-    </a>
 
     <div class="nav-section-label">Ventas</div>
-    <a href="#" class="nav-link-item">
-      <i class="bi bi-cart3"></i> Pedidos
-    </a>
-    <a href="#" class="nav-link-item">
+    <a th:href="@{/clientes}" class="nav-link-item">
       <i class="bi bi-people"></i> Clientes
     </a>
 
     <div class="nav-section-label">Contabilidad</div>
-    <a href="#" class="nav-link-item">
-      <i class="bi bi-cash-stack"></i> Pagos
-    </a>
     <a href="#" class="nav-link-item">
       <i class="bi bi-clipboard-data"></i> Corte de Caja
     </a>
@@ -76,34 +61,28 @@
   </div>
 </aside>
 
-<!-- ═══════════════════════════════════════
-     MAIN
-════════════════════════════════════════ -->
+<!-- MAIN -->
 <div class="main-wrapper">
 
-  <!-- TOPBAR -->
   <header class="topbar">
     <button class="icon-btn d-md-none" onclick="document.getElementById('sidebar').classList.toggle('open')">
       <i class="bi bi-list"></i>
     </button>
-    <div class="topbar-title">
-      Dashboard <span>/ Inicio</span>
-    </div>
+    <div class="topbar-title">Dashboard <span>/ Inicio</span></div>
     <input type="text" class="search-box" placeholder="Buscar...">
     <a href="#" class="icon-btn notif-dot"><i class="bi bi-bell"></i></a>
     <a href="#" class="icon-btn"><i class="bi bi-box-arrow-right"></i></a>
   </header>
 
-  <!-- PAGE CONTENT -->
   <main class="page-content">
 
-    <!-- Header -->
     <div class="page-header">
       <div>
         <div class="page-title">Dashboard</div>
         <div class="page-subtitle">Resumen general del sistema — Marzo 2026</div>
       </div>
-      <button class="btn-accent">
+      <!-- ✅ Botón conectado al modal -->
+      <button class="btn-accent" data-bs-toggle="modal" data-bs-target="#modalPedido">
         <i class="bi bi-plus-lg"></i> Nuevo Pedido
       </button>
     </div>
@@ -144,7 +123,7 @@
       </div>
     </div>
 
-    <!-- Table -->
+    <!-- Tabla pedidos recientes -->
     <div class="data-card">
       <div class="data-card-header">
         <div class="data-card-title">Pedidos Recientes</div>
@@ -166,59 +145,29 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <td class="table-id">#0041</td>
-          <td>María González</td>
-          <td>3 productos</td>
-          <td>$1,250.00</td>
-          <td>11 Mar 2026</td>
-          <td><span class="badge-sigecc badge-success">Entregado</span></td>
+        <!-- ✅ iterar pedidos desde el controller -->
+        <tr th:each="pedido : ${pedidos}">
+          <td class="table-id" th:text="'#' + ${pedido.idPedido}"></td>
+          <td th:text="${pedido.cliente.nombre}"></td>
+          <td th:text="${pedido.totalProductos} + ' productos'"></td>
+          <td th:text="'$' + ${pedido.total}"></td>
+          <td>—</td>
           <td>
-            <div class="d-flex gap-2">
-              <a href="#" class="icon-btn" style="width:30px;height:30px"><i class="bi bi-eye"></i></a>
-              <a href="#" class="icon-btn" style="width:30px;height:30px"><i class="bi bi-pencil"></i></a>
-            </div>
+      <span class="badge-sigecc"
+            th:classappend="${pedido.statusPedido == 'Entregado'} ? 'badge-success' :
+                            (${pedido.statusPedido == 'Pendiente'}  ? 'badge-warning' :
+                            (${pedido.statusPedido == 'Cancelado'}  ? 'badge-danger'  : 'badge-info'))"
+            th:text="${pedido.statusPedido}">
+      </span>
           </td>
-        </tr>
-        <tr>
-          <td class="table-id">#0040</td>
-          <td>Juan Ramírez</td>
-          <td>1 producto</td>
-          <td>$350.00</td>
-          <td>10 Mar 2026</td>
-          <td><span class="badge-sigecc badge-warning">Pendiente</span></td>
           <td>
-            <div class="d-flex gap-2">
-              <a href="#" class="icon-btn" style="width:30px;height:30px"><i class="bi bi-eye"></i></a>
-              <a href="#" class="icon-btn" style="width:30px;height:30px"><i class="bi bi-pencil"></i></a>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td class="table-id">#0039</td>
-          <td>Ana López</td>
-          <td>5 productos</td>
-          <td>$2,780.00</td>
-          <td>09 Mar 2026</td>
-          <td><span class="badge-sigecc badge-info">En camino</span></td>
-          <td>
-            <div class="d-flex gap-2">
-              <a href="#" class="icon-btn" style="width:30px;height:30px"><i class="bi bi-eye"></i></a>
-              <a href="#" class="icon-btn" style="width:30px;height:30px"><i class="bi bi-pencil"></i></a>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td class="table-id">#0038</td>
-          <td>Carlos Mendoza</td>
-          <td>2 productos</td>
-          <td>$890.00</td>
-          <td>08 Mar 2026</td>
-          <td><span class="badge-sigecc badge-danger">Cancelado</span></td>
-          <td>
-            <div class="d-flex gap-2">
-              <a href="#" class="icon-btn" style="width:30px;height:30px"><i class="bi bi-eye"></i></a>
-              <a href="#" class="icon-btn" style="width:30px;height:30px"><i class="bi bi-pencil"></i></a>
+            <div class="d-flex gap-1">
+              <button class="icon-btn icon-btn-sm"><i class="bi bi-eye"></i></button>
+              <button class="icon-btn icon-btn-sm"><i class="bi bi-pencil"></i></button>
+              <button class="icon-btn icon-btn-sm icon-btn-danger"
+                      data-bs-toggle="modal" data-bs-target="#modalEliminar">
+                <i class="bi bi-trash3"></i>
+              </button>
             </div>
           </td>
         </tr>
@@ -229,6 +178,214 @@
   </main>
 </div>
 
+<!-- ═══════════════════════════════════════
+     MODAL — NUEVO PEDIDO
+════════════════════════════════════════ -->
+<div class="modal fade modal-sigecc" id="modalPedido" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form th:action="@{/savePedido}" th:object="${pedidoDTO}" method="post" id="formPedido">
+
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-cart3 me-2"></i>Nuevo Pedido</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+
+            <!-- Cliente -->
+            <div class="col-12 col-md-6">
+              <label class="form-label-sigecc">Cliente</label>
+              <select class="form-input-sigecc" th:field="*{fkCliente}" required>
+                <option value="">Seleccionar cliente...</option>
+                <option th:each="cliente : ${clientes}"
+                        th:value="${cliente.idCliente}"
+                        th:text="${cliente.nombre}">
+                </option>
+              </select>
+            </div>
+
+            <!-- Estado -->
+            <div class="col-12 col-md-6">
+              <label class="form-label-sigecc">Estado</label>
+              <select class="form-input-sigecc" th:field="*{statusPedido}" required>
+                <option value="">Seleccionar...</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="En camino">En camino</option>
+                <option value="Entregado">Entregado</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+
+            <!-- Agregar producto -->
+            <div class="col-12">
+              <label class="form-label-sigecc">Agregar Producto</label>
+              <div class="d-flex gap-2">
+                <select class="form-input-sigecc" id="selectProducto">
+                  <option value="">Seleccionar producto...</option>
+                  <option th:each="producto : ${productos}"
+                          th:value="${producto.idProducto}"
+                          th:text="${producto.nombre} + ' — $' + ${producto.precio}"
+                          th:data-precio="${producto.precio}">
+                  </option>
+                </select>
+                <input type="number" class="form-input-sigecc" id="inputCantidad"
+                       placeholder="Cant." min="1" value="1" style="width: 90px;">
+                <button type="button" class="btn-accent" onclick="agregarProducto()">
+                  <i class="bi bi-plus-lg"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Tabla de productos agregados -->
+            <div class="col-12">
+              <table class="table-sigecc" id="tablaDetalles">
+                <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Precio</th>
+                  <th>Cantidad</th>
+                  <th>Subtotal</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody id="cuerpoDetalles">
+                <tr id="filaVacia">
+                  <td colspan="5" style="text-align:center; color: var(--text-muted);">
+                    Sin productos agregados
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Total -->
+            <div class="col-12 d-flex justify-content-end">
+              <strong>Total: $<span id="totalGeneral">0.00</span></strong>
+            </div>
+
+            <!-- Inputs hidden que se envían al servidor -->
+            <div id="inputsHidden"></div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn-accent">
+            <i class="bi bi-check-lg"></i> Guardar Pedido
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════
+     MODAL — CONFIRMAR ELIMINAR
+════════════════════════════════════════ -->
+<div class="modal fade modal-sigecc modal-danger" id="modalEliminar" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-trash3 me-2"></i>Eliminar Pedido</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body-confirm">
+        <p class="confirm-text">
+          ¿Estás seguro de que deseas eliminar este pedido?<br>
+          <strong class="confirm-warning">Esta acción no se puede deshacer.</strong>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn-danger-sigecc"><i class="bi bi-trash3"></i> Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  let detalles = [];
+
+  function agregarProducto() {
+    const select = document.getElementById('selectProducto');
+    const cantidad = parseInt(document.getElementById('inputCantidad').value);
+    const idProducto = select.value;
+    const nombre = select.options[select.selectedIndex].text;
+    const precio = parseFloat(select.options[select.selectedIndex].dataset.precio);
+
+    if (!idProducto || cantidad < 1) return;
+
+    // Si ya existe, sumar cantidad
+    const existente = detalles.find(d => d.idProducto == idProducto);
+    if (existente) {
+      existente.cantidad += cantidad;
+    } else {
+      detalles.push({ idProducto, nombre, precio, cantidad });
+    }
+
+    renderTabla();
+    select.value = '';
+    document.getElementById('inputCantidad').value = 1;
+  }
+
+  function eliminarProducto(index) {
+    detalles.splice(index, 1);
+    renderTabla();
+  }
+
+  function renderTabla() {
+    const tbody = document.getElementById('cuerpoDetalles');
+    const inputsHidden = document.getElementById('inputsHidden');
+    const filaVacia = document.getElementById('filaVacia');
+
+    tbody.innerHTML = '';
+    inputsHidden.innerHTML = '';
+
+    let total = 0;
+
+    if (detalles.length === 0) {
+      tbody.innerHTML = `<tr id="filaVacia">
+        <td colspan="5" style="text-align:center; color: var(--text-muted);">Sin productos agregados</td>
+      </tr>`;
+    } else {
+      detalles.forEach((d, i) => {
+        const subtotal = d.precio * d.cantidad;
+        total += subtotal;
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${d.nombre}</td>
+            <td>$${d.precio.toFixed(2)}</td>
+            <td>${d.cantidad}</td>
+            <td>$${subtotal.toFixed(2)}</td>
+            <td>
+              <button type="button" class="icon-btn icon-btn-sm icon-btn-danger"
+                      onclick="eliminarProducto(${i})">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </td>
+          </tr>`;
+
+        // Inputs hidden para Spring MVC
+        inputsHidden.innerHTML += `
+          <input type="hidden" name="detalles[${i}].fkProducto" value="${d.idProducto}">
+          <input type="hidden" name="detalles[${i}].cantidad" value="${d.cantidad}">
+        `;
+      });
+    }
+
+    document.getElementById('totalGeneral').textContent = total.toFixed(2);
+  }
+
+  // Limpiar al cerrar el modal
+  document.getElementById('modalPedido').addEventListener('hidden.bs.modal', () => {
+    detalles = [];
+    renderTabla();
+  });
+</script>
 </body>
 </html>
